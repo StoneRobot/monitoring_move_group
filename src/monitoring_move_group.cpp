@@ -5,6 +5,7 @@
 #include <tf/transform_datatypes.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_srvs/Empty.h>
+#include <stdlib.h>
 
 void addData(double posi[], const geometry_msgs::PoseStamped& pose)
 {
@@ -41,8 +42,12 @@ int main(int argc, char** argv)
         addData(position0, pose0);
         addData(position1, pose1);
         data = distance(position0, position1);
-        if(data < 0.01)
+        if(position1[1] < position0[1] + 0.01)
         {
+            system("rosservice call /UR51/set_robot_enable 'enable: false'");
+            system("rosservice call /UR52/set_robot_enable 'enable: false'");
+            system("rosservice call /UR51/clear_robot_fault '{}'");
+            system("rosservice call /UR52/clear_robot_fault '{}'");
         }
     }
     return 0;
